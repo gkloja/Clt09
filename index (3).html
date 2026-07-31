@@ -1,0 +1,2036 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Consulta de Diplomas - Anhanguera</title>
+    
+    <link rel="icon" type="image/svg+xml" href="https://portalinstitucional-assets.azureedge.net/strapi/assets/Logo_Aedu_500x500_1_af6a3f8a83.png">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css" rel="stylesheet">
+    
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary-color: #FF6B35;
+            --primary-dark: #E55100;
+            --secondary-color: #004AAD;
+            --text-dark: #1A1A1A;
+            --text-light: #666666;
+            --bg-light: #F5F5F5;
+            --border-color: #E0E0E0;
+            --success-color: #27AE60;
+            --error-color: #E74C3C;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
+            background: white;
+            color: var(--text-dark);
+            line-height: 1.6;
+            transition: background-color 0.3s, color 0.3s;
+        }
+
+        body.dark-mode {
+            background: #1a1a1a;
+            color: #f0f0f0;
+        }
+
+        body.dark-mode .header,
+        body.dark-mode .breadcrumb,
+        body.dark-mode .hero,
+        body.dark-mode .consulta-card,
+        body.dark-mode .accordion-section,
+        body.dark-mode .footer {
+            background-color: #252525;
+        }
+
+        body.dark-mode .border-color,
+        body.dark-mode .hero,
+        body.dark-mode .breadcrumb {
+            border-bottom-color: #444;
+        }
+
+        body.dark-mode .breadcrumb {
+            background-color: #1a1a1a;
+        }
+
+        body.dark-mode .hero {
+            background: linear-gradient(135deg, #2a1810 0%, #0a1830 100%);
+        }
+
+        body.dark-mode .consulta-card input {
+            background: #333;
+            color: #f0f0f0;
+            border-color: #555;
+        }
+
+        body.dark-mode .consulta-card input::placeholder {
+            color: #aaa;
+        }
+
+        body.dark-mode .consulta-card input:focus {
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 3px rgba(255, 107, 53, 0.2);
+        }
+
+        body.dark-mode .consulta-card h3,
+        body.dark-mode .consulta-card p,
+        body.dark-mode .accordion-content {
+            color: #f0f0f0;
+        }
+
+        body.dark-mode .accordion-title {
+            color: #f0f0f0;
+        }
+
+        /* ============ FONT & THEME CONTROLS ============ */
+        .controls-bar {
+            background: white;
+            padding: 8px 16px;
+            display: flex;
+            gap: 20px;
+            align-items: center;
+            justify-content: space-between;
+            max-width: 100%;
+            border-bottom: 1px solid var(--border-color);
+            font-size: 12px;
+        }
+
+        body.dark-mode .controls-bar {
+            background: #252525;
+            border-bottom-color: #444;
+        }
+
+        .font-controls {
+            display: flex;
+            gap: 8px;
+            align-items: center;
+            position: relative;
+        }
+
+        .theme-icon-btn {
+            background: none;
+            border: none;
+            font-size: 16px;
+            cursor: pointer;
+            padding: 4px 8px;
+            transition: transform 0.2s;
+        }
+
+        .theme-icon-btn:hover {
+            transform: scale(1.1);
+        }
+
+        .font-btn {
+            background: var(--primary-color);
+            color: white;
+            border: none;
+            padding: 4px 10px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 12px;
+            font-weight: 600;
+            transition: all 0.2s;
+            min-width: 30px;
+        }
+
+        .font-btn:hover {
+            background: var(--primary-dark);
+            transform: scale(1.05);
+        }
+
+        .theme-toggle {
+            background: var(--primary-color);
+            border: none;
+            color: white;
+            padding: 6px 14px;
+            border-radius: 20px;
+            cursor: pointer;
+            font-size: 12px;
+            font-weight: 600;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .theme-toggle:hover {
+            background: var(--primary-dark);
+            transform: translateY(-2px);
+        }
+
+        @media (max-width: 768px) {
+            .controls-bar {
+                padding: 6px 12px;
+                gap: 12px;
+                font-size: 11px;
+            }
+            .font-btn {
+                padding: 3px 8px;
+                font-size: 11px;
+            }
+            .theme-toggle {
+                padding: 5px 12px;
+                font-size: 11px;
+            }
+        }
+
+        .signup-banner-text {
+            color: var(--primary-color);
+            font-size: 13px;
+            font-weight: 600;
+            letter-spacing: 0.3px;
+            margin: 0;
+            white-space: nowrap;
+        }
+
+        /* ============ HEADER ============ */
+        .header {
+            background: white;
+            border-bottom: 1px solid var(--border-color);
+            padding: 14px 16px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .header-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .header-left {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .menu-toggle {
+            background: none;
+            border: none;
+            font-size: 22px;
+            cursor: pointer;
+            color: var(--text-dark);
+            display: none;
+            padding: 6px;
+            margin: -6px;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            text-decoration: none;
+        }
+
+        .logo img {
+            height: 36px;
+            width: auto;
+        }
+
+        .header-right {
+            display: flex;
+            align-items: center;
+            gap: 18px;
+        }
+
+        .signup-link {
+            color: var(--text-dark);
+            text-decoration: none;
+            font-size: 13px;
+            font-weight: 500;
+            transition: color 0.3s;
+        }
+
+        .signup-link:hover {
+            color: var(--primary-color);
+        }
+
+        .offers-btn {
+            background: var(--primary-color);
+            color: white;
+            padding: 10px 22px;
+            border-radius: 20px;
+            text-decoration: none;
+            font-size: 13px;
+            font-weight: 600;
+            transition: all 0.3s;
+            border: none;
+            cursor: pointer;
+            white-space: nowrap;
+        }
+
+        .offers-btn:hover {
+            background: var(--primary-dark);
+            transform: translateY(-2px);
+            box-shadow: 0 2px 8px rgba(255, 107, 53, 0.2);
+        }
+
+        .menu-dots {
+            background: none;
+            border: none;
+            color: var(--text-dark);
+            font-size: 20px;
+            cursor: pointer;
+            padding: 8px;
+            margin: -8px;
+            transition: color 0.3s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-width: 36px;
+            height: 36px;
+            visibility: visible;
+            pointer-events: auto;
+        }
+
+        .menu-dots:hover {
+            color: var(--primary-color);
+        }
+
+        body.dark-mode .menu-dots {
+            color: #f0f0f0;
+        }
+
+        @media (max-width: 768px) {
+            .menu-toggle {
+                display: block;
+            }
+            .menu-dots {
+                display: none;
+            }
+            .header-right {
+                gap: 10px;
+            }
+            .signup-link {
+                font-size: 12px;
+            }
+            .offers-btn {
+                padding: 9px 18px;
+                font-size: 12px;
+            }
+        }
+
+        @media (min-width: 769px) {
+            .menu-toggle {
+                display: none;
+            }
+            .menu-dots {
+                display: flex !important;
+                visibility: visible !important;
+            }
+        }
+
+        /* ============ BREADCRUMB ============ */
+        .breadcrumb {
+            background: white;
+            padding: 16px 20px;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .breadcrumb-container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .breadcrumb-container a,
+        .breadcrumb-container span {
+            font-size: 16px;
+            font-weight: 500;
+            color: var(--text-dark);
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .breadcrumb-container a {
+            transition: color 0.2s;
+        }
+
+        .breadcrumb-container a:hover {
+            color: var(--primary-color);
+        }
+
+        .breadcrumb-container span:last-of-type {
+            color: var(--primary-color);
+            font-weight: 700;
+        }
+
+        .breadcrumb-container i {
+            font-size: 14px;
+            color: var(--primary-color);
+        }
+
+        @media (max-width: 768px) {
+            .breadcrumb {
+                padding: 14px 16px;
+            }
+            .breadcrumb-container a,
+            .breadcrumb-container span {
+                font-size: 14px;
+            }
+        }
+
+        /* ============ HERO SECTION ============ */
+        .hero {
+            background: white;
+            padding: 0;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .hero-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 32px;
+            align-items: center;
+            padding: 40px 20px;
+        }
+
+        .hero-image {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 0;
+            order: 2;
+            background: white;
+        }
+
+        .hero-image-wrapper {
+            width: 100%;
+            max-width: 400px;
+            aspect-ratio: auto;
+            clip-path: polygon(0 0, 85% 0, 100% 50%, 85% 100%, 0 100%);
+            overflow: visible;
+            background: transparent;
+            box-shadow: none;
+        }
+
+        .hero-image-wrapper img {
+            width: 100%;
+            height: auto;
+            object-fit: contain;
+            border-radius: 16px;
+        }
+
+        .hero-content {
+            padding: 0;
+            background: white;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            order: 1;
+        }
+
+        .hero-content h1 {
+            font-size: 40px;
+            font-weight: 700;
+            color: var(--text-dark);
+            margin: 0;
+            line-height: 1.15;
+            letter-spacing: -0.3px;
+        }
+
+        .hero-content p {
+            font-size: 15px;
+            color: var(--text-light);
+            line-height: 1.5;
+            margin: 0;
+        }
+
+        @media (max-width: 768px) {
+            .hero {
+                padding: 0;
+                border-bottom: 1px solid var(--border-color);
+            }
+            .hero-container {
+                grid-template-columns: 1fr;
+                gap: 16px;
+                padding: 24px 16px;
+            }
+            .hero-image {
+                padding: 0;
+                order: -1;
+            }
+            .hero-content {
+                padding: 0;
+                order: 2;
+            }
+            .hero-content h1 {
+                font-size: 28px;
+                font-weight: 700;
+                margin: 0;
+            }
+            .hero-content p {
+                font-size: 14px;
+            }
+            .hero-image-wrapper {
+                max-width: 100%;
+            }
+        }
+
+        /* ============ CONSULTA CARDS ============ */
+        .consulta-section {
+            max-width: 1200px;
+            margin: -30px auto 60px;
+            padding: 0 20px;
+            position: relative;
+            z-index: 10;
+        }
+
+        .consulta-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 28px;
+        }
+
+        .consulta-card {
+            background: white;
+            border-radius: 14px;
+            padding: 32px;
+            box-shadow: 0 4px 16px rgba(0,0,0,0.06);
+            border: 1px solid var(--border-color);
+            display: flex;
+            flex-direction: column;
+            transition: box-shadow 0.3s, transform 0.3s;
+        }
+
+        .consulta-card:hover {
+            box-shadow: 0 8px 24px rgba(0,0,0,0.1);
+            transform: translateY(-2px);
+        }
+
+        .consulta-card h3 {
+            font-size: 22px;
+            font-weight: 700;
+            color: var(--text-dark);
+            margin-bottom: 14px;
+        }
+
+        .consulta-card p {
+            font-size: 14px;
+            color: var(--text-light);
+            margin-bottom: 24px;
+            line-height: 1.6;
+            flex-grow: 1;
+        }
+
+        .consulta-card input {
+            width: 100%;
+            padding: 12px 14px;
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            font-size: 14px;
+            color: var(--text-dark);
+            margin-bottom: 16px;
+            transition: all 0.3s;
+            font-family: inherit;
+        }
+
+        .consulta-card input:focus {
+            outline: none;
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 3px rgba(255, 107, 53, 0.1);
+        }
+
+        .consulta-card input::placeholder {
+            color: #999;
+        }
+
+        .consulta-btn {
+            background: var(--primary-color);
+            color: white;
+            border: none;
+            padding: 12px 28px;
+            border-radius: 8px;
+            font-size: 15px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            text-decoration: none;
+            display: inline-block;
+            text-align: center;
+            align-self: flex-start;
+        }
+
+        .consulta-btn:hover {
+            background: var(--primary-dark);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(255, 107, 53, 0.3);
+        }
+
+        .consulta-btn-outline {
+            background: transparent;
+            border: 2px solid var(--primary-color);
+            color: var(--primary-color);
+            width: 100%;
+        }
+
+        .consulta-btn-outline:hover {
+            background: var(--primary-color);
+            color: white;
+            border-color: var(--primary-dark);
+            box-shadow: 0 4px 12px rgba(255, 107, 53, 0.3);
+        }
+
+        .codigo-section {
+            margin-bottom: 16px;
+            animation: slideDown 0.3s ease-out;
+        }
+
+        .codigo-section label {
+            display: block;
+            font-size: 15px;
+            font-weight: 600;
+            color: var(--text-dark);
+            margin-bottom: 10px;
+        }
+
+        .codigo-section input {
+            width: 100%;
+            padding: 12px 14px;
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            font-size: 15px;
+            transition: all 0.3s;
+        }
+
+        .codigo-section input:focus {
+            outline: none;
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 3px rgba(255, 107, 53, 0.1);
+        }
+
+        @keyframes slideDown {
+            from {
+                opacity: 0;
+                transform: translateY(-10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @media (max-width: 768px) {
+            .consulta-grid {
+                grid-template-columns: 1fr;
+                gap: 18px;
+            }
+            .consulta-card {
+                padding: 24px;
+            }
+            .consulta-card h3 {
+                font-size: 19px;
+                margin-bottom: 12px;
+            }
+            .consulta-card p {
+                font-size: 14px;
+                margin-bottom: 18px;
+            }
+            .consulta-btn {
+                padding: 11px 24px;
+                font-size: 14px;
+            }
+        }
+
+        /* ============ MODAL DE RESULTADO ============ */
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(15, 15, 20, 0.6);
+            backdrop-filter: blur(3px);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            animation: fadeIn 0.25s ease;
+        }
+
+        .modal-overlay.active {
+            display: flex;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+            }
+            to {
+                opacity: 1;
+            }
+        }
+
+        .modal-content {
+            background: white;
+            border-radius: 20px;
+            padding: 0;
+            max-width: 660px;
+            width: 100%;
+            max-height: 90vh;
+            overflow-y: auto;
+            animation: slideUp 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+            box-shadow: 0 25px 70px rgba(0, 0, 0, 0.35);
+        }
+
+        body.dark-mode .modal-content {
+            background: #252525;
+        }
+
+        @keyframes slideUp {
+            from {
+                opacity: 0;
+                transform: translateY(24px) scale(0.98);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0) scale(1);
+            }
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            gap: 16px;
+            padding: 28px 32px;
+            background: linear-gradient(135deg, var(--primary-color), var(--primary-dark));
+            border-radius: 20px 20px 0 0;
+            position: sticky;
+            top: 0;
+        }
+
+        .modal-header-left {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+
+        .modal-header-icon {
+            width: 48px;
+            height: 48px;
+            flex-shrink: 0;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.18);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+            color: white;
+        }
+
+        .modal-header h2 {
+            font-size: 20px;
+            font-weight: 700;
+            color: white;
+            margin: 0 0 4px 0;
+        }
+
+        .modal-header .modal-subtitle {
+            font-size: 13px;
+            color: rgba(255, 255, 255, 0.85);
+        }
+
+        .modal-close {
+            background: rgba(255, 255, 255, 0.15);
+            border: none;
+            font-size: 20px;
+            line-height: 1;
+            cursor: pointer;
+            color: white;
+            transition: background 0.2s, transform 0.2s;
+            width: 34px;
+            height: 34px;
+            border-radius: 50%;
+            flex-shrink: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal-close:hover {
+            background: rgba(255, 255, 255, 0.3);
+            transform: rotate(90deg);
+        }
+
+        .modal-body {
+            padding: 28px 32px 32px;
+        }
+
+        /* Painel de verificação com QR Code */
+        .verification-panel {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            padding: 18px 20px;
+            margin-bottom: 26px;
+            background: linear-gradient(135deg, rgba(0, 74, 173, 0.05), rgba(255, 107, 53, 0.05));
+            border: 1px solid var(--border-color);
+            border-radius: 14px;
+        }
+
+        body.dark-mode .verification-panel {
+            background: linear-gradient(135deg, rgba(0, 74, 173, 0.12), rgba(255, 107, 53, 0.1));
+            border-color: #3a3a3a;
+        }
+
+        .verification-qr {
+            flex-shrink: 0;
+            width: 96px;
+            height: 96px;
+            padding: 6px;
+            background: white;
+            border-radius: 10px;
+            border: 1px solid var(--border-color);
+        }
+
+        .verification-qr img {
+            width: 100%;
+            height: 100%;
+            display: block;
+            border-radius: 4px;
+        }
+
+        .verification-info {
+            flex: 1;
+            min-width: 0;
+        }
+
+        .verification-status {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-weight: 700;
+            font-size: 14.5px;
+            color: var(--success-color);
+            margin-bottom: 5px;
+        }
+
+        .verification-status .seal-icon {
+            width: 22px;
+            height: 22px;
+            border-radius: 50%;
+            background: var(--success-color);
+            color: white;
+            font-size: 11px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+        }
+
+        .verification-caption {
+            font-size: 12.5px;
+            color: var(--text-light);
+            line-height: 1.5;
+            margin-bottom: 12px;
+        }
+
+        .verification-actions {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+
+        .btn-verify-action {
+            font-size: 12px;
+            font-weight: 600;
+            padding: 7px 13px;
+            border-radius: 20px;
+            border: 1px solid var(--border-color);
+            background: white;
+            color: var(--text-dark);
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            transition: all 0.2s;
+        }
+
+        body.dark-mode .btn-verify-action {
+            background: #1f1f1f;
+            border-color: #3a3a3a;
+            color: #f0f0f0;
+        }
+
+        .btn-verify-action:hover {
+            background: var(--bg-light);
+            border-color: var(--primary-color);
+            color: var(--primary-color);
+        }
+
+        body.dark-mode .btn-verify-action:hover {
+            background: #2b2b2b;
+        }
+
+        /* Títulos de seção */
+        .section-title {
+            display: flex;
+            align-items: center;
+            gap: 7px;
+            font-size: 11px;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: 0.6px;
+            color: var(--primary-color);
+            margin: 22px 0 10px;
+        }
+
+        .section-title:first-of-type {
+            margin-top: 0;
+        }
+
+        .section-title i {
+            font-size: 11px;
+        }
+
+        @media (max-width: 480px) {
+            .verification-panel {
+                flex-direction: column;
+                text-align: center;
+            }
+            .verification-actions {
+                justify-content: center;
+            }
+        }
+
+        .info-card {
+            background: var(--bg-light);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 14px 16px;
+            display: flex;
+            align-items: flex-start;
+            gap: 12px;
+            transition: border-color 0.2s;
+        }
+
+        body.dark-mode .info-card {
+            background: #1f1f1f;
+            border-color: #3a3a3a;
+        }
+
+        .info-icon {
+            width: 34px;
+            height: 34px;
+            flex-shrink: 0;
+            border-radius: 9px;
+            background: rgba(255, 107, 53, 0.12);
+            color: var(--primary-color);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 14px;
+        }
+
+        body.dark-mode .info-icon {
+            background: rgba(255, 107, 53, 0.2);
+        }
+
+        .info-group {
+            margin-bottom: 0;
+            min-width: 0;
+        }
+
+        .info-label {
+            font-size: 11px;
+            font-weight: 700;
+            color: var(--text-light);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 4px;
+        }
+
+        .info-value {
+            font-size: 15px;
+            font-weight: 600;
+            color: var(--text-dark);
+            word-break: break-word;
+        }
+
+        .info-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 14px;
+            margin-bottom: 14px;
+        }
+
+        .info-row .info-group {
+            margin-bottom: 0;
+        }
+
+        .info-group-full {
+            margin-bottom: 14px;
+        }
+
+        .tipo-badge {
+            display: inline-block;
+            background: rgba(255, 255, 255, 0.2);
+            color: white;
+            padding: 6px 14px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.3px;
+        }
+
+        .tipo-badge[data-tipo="diploma"] {
+            background: linear-gradient(135deg, #3498db, #2980b9);
+            color: white;
+        }
+
+        .tipo-badge[data-tipo="certificado"] {
+            background: linear-gradient(135deg, #f39c12, #e67e22);
+            color: white;
+        }
+
+        .tipo-badge[data-tipo="historico"] {
+            background: linear-gradient(135deg, #9b59b6, #8e44ad);
+            color: white;
+        }
+
+        .tipo-badge[data-tipo="colacao"] {
+            background: linear-gradient(135deg, #1abc9c, #16a085);
+            color: white;
+        }
+
+        /* Validações Container */
+        .validacoes-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-bottom: 18px;
+            padding: 14px 16px;
+            background: linear-gradient(135deg, rgba(39, 174, 96, 0.08), rgba(39, 174, 96, 0.03));
+            border-radius: 12px;
+            border: 1px solid rgba(39, 174, 96, 0.25);
+        }
+
+        /* Badges de Validação */
+        .validation-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 7px;
+            padding: 7px 13px;
+            background: white;
+            color: var(--success-color);
+            border: 1px solid rgba(39, 174, 96, 0.35);
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 700;
+            animation: popIn 0.35s ease-out;
+        }
+
+        body.dark-mode .validation-badge {
+            background: #1f1f1f;
+        }
+
+        @keyframes popIn {
+            from {
+                transform: scale(0.8);
+                opacity: 0;
+            }
+            to {
+                transform: scale(1);
+                opacity: 1;
+            }
+        }
+
+        .modal-footer {
+            display: flex;
+            gap: 10px;
+            justify-content: flex-end;
+            margin-top: 22px;
+            padding-top: 18px;
+            border-top: 1px solid var(--border-color);
+        }
+
+        body.dark-mode .modal-footer {
+            border-top-color: #3a3a3a;
+        }
+
+        .btn-modal {
+            padding: 11px 22px;
+            border: none;
+            border-radius: 10px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            text-decoration: none;
+        }
+
+        .btn-fechar {
+            background: var(--bg-light);
+            color: var(--text-dark);
+            border: 1px solid var(--border-color);
+        }
+
+        body.dark-mode .btn-fechar {
+            background: #1f1f1f;
+            border-color: #3a3a3a;
+            color: #f0f0f0;
+        }
+
+        .btn-fechar:hover {
+            background: #E8E8E8;
+        }
+
+        body.dark-mode .btn-fechar:hover {
+            background: #2b2b2b;
+        }
+
+        .btn-print {
+            background: var(--primary-color);
+            color: white;
+        }
+
+        .btn-print:hover {
+            background: var(--primary-dark);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(255, 107, 53, 0.3);
+        }
+
+        .loading {
+            display: none;
+            text-align: center;
+            padding: 60px 32px;
+        }
+
+        .loading.active {
+            display: block;
+        }
+
+        .spinner {
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid var(--primary-color);
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 20px;
+        }
+
+        body.dark-mode .spinner {
+            border-color: #3a3a3a;
+            border-top-color: var(--primary-color);
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .error-message {
+            background: #FCE4E4;
+            color: var(--error-color);
+            padding: 16px;
+            border-radius: 10px;
+            border: 1px solid var(--error-color);
+            margin: 24px 32px;
+            display: none;
+        }
+
+        .error-message.show {
+            display: block;
+        }
+
+        @media (max-width: 480px) {
+            .modal-header {
+                padding: 22px 20px;
+            }
+            .modal-body {
+                padding: 22px 20px 26px;
+            }
+            .info-row {
+                grid-template-columns: 1fr;
+            }
+            .modal-footer {
+                flex-direction: column-reverse;
+            }
+            .btn-modal {
+                width: 100%;
+                justify-content: center;
+            }
+        }
+
+        /* ============ ACCORDION ============ */
+        .accordion-section {
+            background: white;
+            padding: 50px 20px;
+        }
+
+        .accordion-container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .accordion-item {
+            border-bottom: 1px solid var(--border-color);
+            padding: 24px 0;
+        }
+
+        .accordion-item:first-child {
+            padding-top: 0;
+        }
+
+        .accordion-title {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            cursor: pointer;
+            user-select: none;
+            padding: 0;
+            font-size: 16px;
+            font-weight: 600;
+            color: var(--text-dark);
+            transition: all 0.3s;
+        }
+
+        .accordion-title:hover {
+            color: var(--primary-color);
+        }
+
+        .accordion-title.active {
+            color: var(--primary-color);
+        }
+
+        .accordion-icon {
+            transition: transform 0.3s;
+            color: var(--primary-color);
+        }
+
+        .accordion-title.active .accordion-icon {
+            transform: rotate(180deg);
+        }
+
+        .accordion-content {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.3s ease-out;
+            padding: 0;
+        }
+
+        .accordion-content.show {
+            max-height: 500px;
+            padding: 12px 0;
+        }
+
+        .accordion-content p {
+            font-size: 14px;
+            color: var(--text-light);
+            margin-bottom: 12px;
+            line-height: 1.6;
+        }
+
+        .accordion-content ul {
+            list-style: none;
+            padding-left: 0;
+        }
+
+        .accordion-content li {
+            font-size: 14px;
+            color: var(--text-light);
+            margin-bottom: 8px;
+            padding-left: 20px;
+            position: relative;
+        }
+
+        .accordion-content li:before {
+            content: "•";
+            position: absolute;
+            left: 0;
+            color: var(--primary-color);
+            font-weight: bold;
+        }
+
+        /* ============ FOOTER ============ */
+        .footer {
+            background: #F5F5F5;
+            padding: 40px 20px 20px;
+            border-top: 1px solid var(--border-color);
+        }
+
+        .footer-container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .social-section {
+            text-align: center;
+            padding: 20px 0;
+            border-bottom: 1px solid var(--border-color);
+            margin-bottom: 30px;
+        }
+
+        .social-section h3 {
+            font-size: 16px;
+            font-weight: 600;
+            color: var(--text-dark);
+            margin-bottom: 16px;
+        }
+
+        .social-icons {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            flex-wrap: wrap;
+        }
+
+        .social-icons a {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: white;
+            border: 1px solid var(--border-color);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--text-dark);
+            text-decoration: none;
+            transition: all 0.3s;
+        }
+
+        .social-icons a:hover {
+            background: var(--primary-color);
+            color: white;
+            border-color: var(--primary-color);
+        }
+
+        .footer-logo {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .footer-logo img {
+            height: 40px;
+            width: auto;
+            margin-bottom: 12px;
+        }
+
+        .footer-bottom {
+            text-align: center;
+            font-size: 12px;
+            color: var(--text-light);
+            padding: 20px 0;
+            border-top: 1px solid var(--border-color);
+        }
+
+        .footer-bottom a {
+            color: var(--text-light);
+            text-decoration: none;
+        }
+
+        .footer-bottom a:hover {
+            color: var(--primary-color);
+        }
+
+        /* ============ WHATSAPP BUTTON ============ */
+        .whatsapp-btn {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            width: 56px;
+            height: 56px;
+            background: #25D366;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+            transition: all 0.3s;
+            z-index: 50;
+            text-decoration: none;
+            color: white;
+            font-size: 28px;
+        }
+
+        .whatsapp-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 16px rgba(0,0,0,0.2);
+        }
+
+        .whatsapp-badge {
+            position: absolute;
+            top: -5px;
+            right: -5px;
+            background: #E74C3C;
+            color: white;
+            border-radius: 50%;
+            width: 22px;
+            height: 22px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 12px;
+            font-weight: bold;
+        }
+
+        /* Dark Mode para Modal e Badges */
+        body.dark-mode .validacoes-container {
+            background: linear-gradient(135deg, rgba(39, 174, 96, 0.2), rgba(39, 174, 96, 0.1));
+        }
+
+        body.dark-mode .validation-badge {
+            background: linear-gradient(135deg, #27AE60, #1e8449);
+        }
+
+        body.dark-mode .info-value {
+            background: #333;
+            color: #f0f0f0;
+        }
+
+        body.dark-mode .error-message {
+            background: linear-gradient(135deg, rgba(231, 76, 60, 0.2), rgba(192, 57, 43, 0.1));
+        }
+
+        @media print {
+            .header, .breadcrumb, .whatsapp-btn {
+                display: none;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- CONTROLS BAR (Font Size & Theme Toggle + Signup) -->
+    <div class="controls-bar">
+        <div class="font-controls">
+            <button class="font-btn" onclick="decreaseFont()" title="Diminuir tamanho da fonte">A−</button>
+            <button class="font-btn" onclick="increaseFont()" title="Aumentar tamanho da fonte">A+</button>
+            <button class="theme-icon-btn" onclick="toggleTheme()" title="Alternar modo claro/escuro">
+                <span id="theme-icon-small">🌙</span>
+            </button>
+        </div>
+        <p class="signup-banner-text">Acompanhe sua inscrição</p>
+    </div>
+
+    <!-- HEADER -->
+    <header class="header">
+        <div class="header-container">
+            <div class="header-left">
+                <button class="menu-toggle" aria-label="Menu">
+                    <i class="fas fa-bars"></i>
+                </button>
+                                <button class="menu-dots" aria-label="Menu" title="Mais opções">
+                    <i class="fas fa-bars"></i>
+                </button>
+                <a href="/" class="logo">
+                    <img src="https://portalinstitucional-assets.azureedge.net/strapi/assets/Logo_Anhanguera_Horizontal_170x60px_1_d985ea5183.svg" alt="Anhanguera">
+                </a>
+
+            </div>
+            <div class="header-right">
+                <button class="offers-btn">Ver Ofertas</button>
+            </div>
+        </div>
+    </header>
+
+    <!-- BREADCRUMB -->
+    <nav class="breadcrumb">
+        <div class="breadcrumb-container">
+            <a href="/">HOME</a>
+            <span><i class="fas fa-chevron-right"></i></span>
+            <span>DIPLOMAS</span>
+        </div>
+    </nav>
+
+    <!-- HERO SECTION -->
+    <section class="hero">
+        <div class="hero-container">
+            <div class="hero-image">
+                <div class="hero-image-wrapper">
+                    <img src="https://www.anhanguera.com/portalinstitucional/portalinstitucional-front/_next/image/?url=https%3A%2F%2Fportalinstitucional-assets.azureedge.net%2Fstrapi%2Fassets%2FGroup_3_09f7020b1d.png&w=750&q=75" alt="Consulta de Diplomas">
+                </div>
+            </div>
+            <div class="hero-content">
+                <h1>Consulta Pública de Diplomas Anhanguera</h1>
+                <p>Este é o portal público de consulta de diplomas de graduação emitidos pela Anhanguera</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- CONSULTA CARDS -->
+    <section class="consulta-section">
+        <div class="consulta-grid">
+            <!-- Diploma Físico -->
+            <div class="consulta-card">
+                <h3>Diploma Físico</h3>
+                <p>Para consultar um Diploma Físico ou Publicações no Diário Oficial da União (Diplomas Físicos e Digitais)</p>
+                <div class="codigo-section" id="codigoFisico" style="display: none;">
+                    <label for="codigo-fisico-input"><strong>Código</strong></label>
+                    <input type="text" id="codigo-fisico-input" placeholder="Código de validação">
+                </div>
+                <button class="consulta-btn consulta-btn-outline" onclick="toggleCodigoFisico()">Consultar</button>
+            </div>
+
+            <!-- Diploma Digital -->
+            <div class="consulta-card">
+                <h3>Diploma Digital</h3>
+                <p>Para consultar um Diploma Digital, informe no campo abaixo o código de validação localizado no canto inferior direito do anverso da Representação Visual do Diploma Digital</p>
+                <div class="codigo-section">
+                    <label for="codigo-input"><strong>Código</strong></label>
+                    <input type="text" id="codigo-input" placeholder="Código de validação">
+                </div>
+                <button class="consulta-btn consulta-btn-outline" onclick="consultarDiploma()">Consultar</button>
+            </div>
+        </div>
+    </section>
+
+    <!-- MODAL DE RESULTADO -->
+    <div class="modal-overlay" id="resultadoModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <div class="modal-header-left">
+                    <div class="modal-header-icon"><i class="fas fa-certificate"></i></div>
+                    <div>
+                        <h2 id="modalTitle">Diploma Encontrado</h2>
+                        <span class="tipo-badge" id="tipoInfo">-</span>
+                    </div>
+                </div>
+                <button class="modal-close" onclick="fecharModal()" aria-label="Fechar">&times;</button>
+            </div>
+
+            <div class="loading" id="loading">
+                <div class="spinner"></div>
+                <p>Buscando diploma...</p>
+            </div>
+
+            <div class="error-message" id="errorMessage"></div>
+
+            <div class="modal-body" id="resultadoContent" style="display: none;">
+                <div class="section-title"><i class="fas fa-user"></i> Dados do Aluno</div>
+                <div class="info-row">
+                    <div class="info-card">
+                        <div class="info-icon"><i class="fas fa-user"></i></div>
+                        <div class="info-group">
+                            <div class="info-label">Nome do Aluno</div>
+                            <div class="info-value" id="alunoInfo">-</div>
+                        </div>
+                    </div>
+                    <div class="info-card">
+                        <div class="info-icon"><i class="fas fa-id-card"></i></div>
+                        <div class="info-group">
+                            <div class="info-label">CPF</div>
+                            <div class="info-value" id="cpfInfo">-</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="section-title"><i class="fas fa-graduation-cap"></i> Dados Acadêmicos</div>
+                <div class="info-group-full">
+                    <div class="info-card">
+                        <div class="info-icon"><i class="fas fa-graduation-cap"></i></div>
+                        <div class="info-group">
+                            <div class="info-label">Curso</div>
+                            <div class="info-value" id="cursoInfo">-</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="info-row">
+                    <div class="info-card">
+                        <div class="info-icon"><i class="fas fa-university"></i></div>
+                        <div class="info-group">
+                            <div class="info-label">Instituição</div>
+                            <div class="info-value" id="instInfo">-</div>
+                        </div>
+                    </div>
+                    <div class="info-card">
+                        <div class="info-icon"><i class="fas fa-map-marker-alt"></i></div>
+                        <div class="info-group">
+                            <div class="info-label">Campus</div>
+                            <div class="info-value" id="campusInfo">-</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="info-row">
+                    <div class="info-card">
+                        <div class="info-icon"><i class="fas fa-calendar-check"></i></div>
+                        <div class="info-group">
+                            <div class="info-label">Data de Colação</div>
+                            <div class="info-value" id="dataColacaoInfo">-</div>
+                        </div>
+                    </div>
+                    <div class="info-card">
+                        <div class="info-icon"><i class="fas fa-calendar-alt"></i></div>
+                        <div class="info-group">
+                            <div class="info-label">Data de Registro</div>
+                            <div class="info-value" id="dataRegistroInfo">-</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="info-group-full">
+                    <div class="info-card">
+                        <div class="info-icon"><i class="fas fa-barcode"></i></div>
+                        <div class="info-group">
+                            <div class="info-label">Código de Validação</div>
+                            <div class="info-value" id="codigoInfo">-</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="section-title"><i class="fas fa-shield-alt"></i> Comprovação</div>
+                <div class="verification-panel">
+                    <div class="verification-qr">
+                        <img id="qrCodeImg" src="" alt="QR Code de validação">
+                    </div>
+                    <div class="verification-info">
+                        <div class="verification-status">
+                            <span class="seal-icon"><i class="fas fa-check"></i></span>
+                            Documento Verificado
+                        </div>
+                        <div class="verification-caption">Aponte a câmera do celular para o QR Code ou compartilhe o link para que qualquer pessoa valide este documento.</div>
+                        <div class="verification-actions">
+                            <button class="btn-verify-action" id="btnCopiarLink" onclick="copiarLinkValidacao()">
+                                <i class="fas fa-link"></i> Copiar link
+                            </button>
+                            <a class="btn-verify-action" id="btnBaixarQr" href="" download="qrcode-validacao.png">
+                                <i class="fas fa-download"></i> Baixar QR Code
+                            </a>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="modal-footer">
+                    <button class="btn-modal btn-fechar" onclick="fecharModal()">Fechar</button>
+                    <button class="btn-modal btn-print" onclick="window.print()">
+                        <i class="fas fa-print"></i> Imprimir
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ACCORDION SECTION -->
+    <section class="accordion-section">
+        <div class="accordion-container">
+            <!-- Nossos Cursos -->
+            <div class="accordion-item">
+                <div class="accordion-title" onclick="toggleAccordion(this)">
+                    <span>Nossos Cursos</span>
+                    <span class="accordion-icon"><i class="fas fa-chevron-down"></i></span>
+                </div>
+                <div class="accordion-content">
+                    <p>Conheça os cursos oferecidos pela Anhanguera em diversas áreas de formação:</p>
+                    <ul>
+                        <li>Administração</li>
+                        <li>Engenharia</li>
+                        <li>Pedagogia</li>
+                        <li>Direito</li>
+                        <li>Contabilidade</li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- A Anhanguera -->
+            <div class="accordion-item">
+                <div class="accordion-title" onclick="toggleAccordion(this)">
+                    <span>A Anhanguera</span>
+                    <span class="accordion-icon"><i class="fas fa-chevron-down"></i></span>
+                </div>
+                <div class="accordion-content">
+                    <p>A Anhanguera é uma instituição de ensino superior com ampla experiência em educação de qualidade:</p>
+                    <ul>
+                        <li>Fundada em 1994</li>
+                        <li>Presença em todo o Brasil</li>
+                        <li>Mais de 100 mil alunos</li>
+                        <li>Reconhecida pelo MEC</li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- Formas de Ingresso -->
+            <div class="accordion-item">
+                <div class="accordion-title" onclick="toggleAccordion(this)">
+                    <span>Formas de Ingresso</span>
+                    <span class="accordion-icon"><i class="fas fa-chevron-down"></i></span>
+                </div>
+                <div class="accordion-content">
+                    <p>Conheça as diferentes formas de ingressar na Anhanguera:</p>
+                    <ul>
+                        <li>ENEM - Pontuação no ENEM</li>
+                        <li>Vestibular próprio</li>
+                        <li>Análise de histórico escolar</li>
+                        <li>Transferência externa</li>
+                        <li>Portador de diploma</li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- Carreira e Suporte -->
+            <div class="accordion-item">
+                <div class="accordion-title" onclick="toggleAccordion(this)">
+                    <span>Carreira e Suporte</span>
+                    <span class="accordion-icon"><i class="fas fa-chevron-down"></i></span>
+                </div>
+                <div class="accordion-content">
+                    <p>Oferecemos suporte completo para sua carreira e desenvolvimento profissional:</p>
+                    <ul>
+                        <li>Programa de Trainees</li>
+                        <li>Orientação profissional</li>
+                        <li>Parcerias com empresas</li>
+                        <li>Acompanhamento de egressos</li>
+                        <li>Bolsas e financiamentos</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- FOOTER -->
+    <footer class="footer">
+        <div class="footer-container">
+            <div class="social-section">
+                <h3>Nos siga nas redes</h3>
+                <div class="social-icons">
+                    <a href="#" title="Instagram" aria-label="Instagram">
+                        <i class="fab fa-instagram"></i>
+                    </a>
+                    <a href="#" title="Facebook" aria-label="Facebook">
+                        <i class="fab fa-facebook-f"></i>
+                    </a>
+                    <a href="#" title="YouTube" aria-label="YouTube">
+                        <i class="fab fa-youtube"></i>
+                    </a>
+                    <a href="#" title="LinkedIn" aria-label="LinkedIn">
+                        <i class="fab fa-linkedin-in"></i>
+                    </a>
+                    <a href="#" title="Twitter" aria-label="Twitter">
+                        <i class="fab fa-twitter"></i>
+                    </a>
+                </div>
+            </div>
+
+            <div class="footer-logo">
+                <img src="https://portalinstitucional-assets.azureedge.net/strapi/assets/Logo_Anhanguera_Horizontal_170x60px_1_d985ea5183.svg" alt="Anhanguera">
+            </div>
+
+            <div class="footer-bottom">
+                <p>&copy; Copyright 2026 Anhanguera - CNPJ: 04.310.392/0001-46. Todos os direitos reservados.</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- WHATSAPP BUTTON -->
+    <a href="https://wa.me/5511999999999" class="whatsapp-btn" target="_blank" title="Fale conosco no WhatsApp">
+        <i class="fab fa-whatsapp"></i>
+        <span class="whatsapp-badge">1</span>
+    </a>
+
+    <script>
+        // ========== FONT SIZE CONTROL ==========
+        let fontScale = 1;
+        const maxScale = 1.3;
+        const minScale = 0.9;
+        const scaleStep = 0.05;
+
+        function increaseFont() {
+            if (fontScale < maxScale) {
+                fontScale += scaleStep;
+                applyFontScale();
+            }
+        }
+
+        function decreaseFont() {
+            if (fontScale > minScale) {
+                fontScale -= scaleStep;
+                applyFontScale();
+            }
+        }
+
+        function applyFontScale() {
+            document.documentElement.style.fontSize = (16 * fontScale) + 'px';
+            localStorage.setItem('fontScale', fontScale);
+        }
+
+        // ========== TOGGLE CODIGO FISICO ==========
+        function toggleCodigoFisico() {
+            const codigoSection = document.getElementById('codigoFisico');
+            const codigoInput = document.getElementById('codigo-fisico-input');
+            
+            if (codigoSection.style.display === 'none') {
+                codigoSection.style.display = 'block';
+                setTimeout(() => {
+                    codigoInput.focus();
+                }, 100);
+            } else {
+                codigoSection.style.display = 'none';
+            }
+        }
+
+async function consultarDiploma() {
+    const codigo = document.getElementById('codigo-input').value.trim().toUpperCase();
+    
+    if (!codigo) {
+        mostraErro('Por favor, digite o código de validação');
+        return;
+    }
+
+    console.log('🔍 Buscando código:', codigo);
+    abrirModal();
+    await buscarDiploma(codigo);
+}
+
+async function buscarDiploma(codigo) {
+    try {
+        document.getElementById('loading').classList.add('active');
+        document.getElementById('resultadoContent').style.display = 'none';
+        document.getElementById('errorMessage').classList.remove('show');
+
+        console.log('📡 POST para:', '/cliente09/api/v1/buscar');
+        console.log('📦 Enviando termo:', codigo);
+
+        const response = await fetch('https://orange-hill-2e61.gbscabral15.workers.dev/br2.bronxyshost.com:4009/proxy?url=http://br2.bronxyshost.com:4009/cliente09/api/v1/buscar', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ termo: codigo })
+        });
+
+        console.log('📊 Status:', response.status);
+        const data = await response.json();
+        console.log('📨 Resposta:', data);
+        
+        document.getElementById('loading').classList.remove('active');
+
+        if (!data.success) {
+            mostraErro(data.erro || 'Diploma não encontrado');
+            return;
+        }
+
+        if (data.data && data.data.length > 0) {
+            const diploma = data.data[0];
+            console.log('✅ Diploma encontrado:', diploma);
+            exibirDados(diploma);
+        } else {
+            mostraErro('Diploma não encontrado no sistema');
+        }
+
+    } catch (err) {
+        console.error('❌ Erro na busca:', err);
+        document.getElementById('loading').classList.remove('active');
+        mostraErro('Erro ao consultar diploma. Tente novamente.');
+    }
+}
+
+let ultimoLinkValidacao = null;
+
+function exibirDados(diploma) {
+    console.log('🎯 Exibindo dados do diploma:', diploma);
+    
+    // Informações básicas
+    document.getElementById('alunoInfo').textContent = diploma.aluno || '-';
+    document.getElementById('cpfInfo').textContent = formatarCPF(diploma.cpf) || '-';
+    document.getElementById('tipoInfo').textContent = diploma.tipoFormatado || diploma.tipo || 'Diploma';
+    document.getElementById('tipoInfo').setAttribute('data-tipo', diploma.tipo || 'diploma');
+    document.getElementById('instInfo').textContent = diploma.instituicao || '-';
+    document.getElementById('campusInfo').textContent = diploma.campus || '-';
+    document.getElementById('cursoInfo').textContent = diploma.curso || '-';
+    document.getElementById('dataColacaoInfo').textContent = formatarData(diploma.dataColacao) || '-';
+    document.getElementById('dataRegistroInfo').textContent = formatarData(diploma.dataRegistro) || '-';
+    document.getElementById('codigoInfo').textContent = diploma.id || '-';
+
+    // QR CODE + LINK DE VALIDAÇÃO
+    const linkValidacao = `https://anhangueradiplomas.com/?codigo=${encodeURIComponent(diploma.id || '')}`;
+    const qrSrc = `https://api.qrserver.com/v1/create-qr-code/?size=220x220&data=${encodeURIComponent(linkValidacao)}`;
+    document.getElementById('qrCodeImg').src = qrSrc;
+    document.getElementById('btnBaixarQr').href = `https://api.qrserver.com/v1/create-qr-code/?size=500x500&data=${encodeURIComponent(linkValidacao)}`;
+    document.getElementById('btnBaixarQr').download = `qrcode-${diploma.id || 'diploma'}.png`;
+    ultimoLinkValidacao = linkValidacao;
+
+    // BADGES DE VALIDAÇÃO
+    const validacoesContainer = document.getElementById('validacoesContent') || criarValidacoes();
+    validacoesContainer.innerHTML = '';
+
+    if (diploma.validacoes) {
+        console.log('🔒 Validações:', diploma.validacoes);
+        
+        if (diploma.validacoes.colacaoGrau?.validado) {
+            validacoesContainer.innerHTML += '<span class="validation-badge valid">✅ Colação de Grau</span>';
+        }
+        if (diploma.validacoes.certificadoConclusao?.validado) {
+            validacoesContainer.innerHTML += '<span class="validation-badge valid">✅ Certificado de Conclusão</span>';
+        }
+        if (diploma.validacoes.historico?.validado) {
+            validacoesContainer.innerHTML += '<span class="validation-badge valid">✅ Histórico Escolar</span>';
+        }
+    }
+
+    document.getElementById('resultadoContent').style.display = 'block';
+}
+
+function criarValidacoes() {
+    const el = document.createElement('div');
+    el.id = 'validacoesContent';
+    el.className = 'validacoes-container';
+    const resultadoContent = document.getElementById('resultadoContent');
+    resultadoContent.insertBefore(el, resultadoContent.firstChild);
+    return el;
+}
+
+function copiarLinkValidacao() {
+    if (!ultimoLinkValidacao) return;
+    const btn = document.getElementById('btnCopiarLink');
+    const original = btn.innerHTML;
+    navigator.clipboard.writeText(ultimoLinkValidacao).then(() => {
+        btn.innerHTML = '<i class="fas fa-check"></i> Link copiado!';
+        setTimeout(() => { btn.innerHTML = original; }, 2000);
+    }).catch(() => {
+        btn.innerHTML = '<i class="fas fa-times"></i> Não foi possível copiar';
+        setTimeout(() => { btn.innerHTML = original; }, 2000);
+    });
+}
+
+        function formatarCPF(cpf) {
+            if (!cpf) return '-';
+            const clean = cpf.replace(/\D/g, '');
+            if (clean.length !== 11) return cpf;
+            return clean.substring(0, 3) + '.' + clean.substring(3, 6) + '.' + 
+                   clean.substring(6, 9) + '-' + clean.substring(9, 11);
+        }
+
+        function formatarData(data) {
+            if (!data) return '-';
+            const d = new Date(data);
+            if (isNaN(d.getTime())) return data;
+            return d.toLocaleDateString('pt-BR');
+        }
+
+        function mostraErro(msg) {
+            const errorEl = document.getElementById('errorMessage');
+            errorEl.textContent = '❌ ' + msg;
+            errorEl.classList.add('show');
+        }
+
+        function abrirModal() {
+            document.getElementById('resultadoModal').classList.add('active');
+        }
+
+        function fecharModal() {
+            document.getElementById('resultadoModal').classList.remove('active');
+            document.getElementById('codigo-input').value = '';
+        }
+
+        // Fechar modal ao clicar no overlay
+        document.getElementById('resultadoModal').addEventListener('click', (e) => {
+            if (e.target.id === 'resultadoModal') {
+                fecharModal();
+            }
+        });
+
+        // ========== DARK MODE TOGGLE ==========
+        function toggleTheme() {
+            const body = document.body;
+            const isDarkMode = body.classList.toggle('dark-mode');
+            const themeIconSmall = document.getElementById('theme-icon-small');
+            const themeIcon = document.getElementById('theme-icon');
+            const themeText = document.getElementById('theme-text');
+
+            if (isDarkMode) {
+                if (themeIconSmall) themeIconSmall.textContent = '☀️';
+                if (themeIcon) themeIcon.textContent = '☀️';
+                if (themeText) themeText.textContent = 'Modo Claro';
+                localStorage.setItem('theme', 'dark');
+            } else {
+                if (themeIconSmall) themeIconSmall.textContent = '🌙';
+                if (themeIcon) themeIcon.textContent = '🌙';
+                if (themeText) themeText.textContent = 'Modo Escuro';
+                localStorage.setItem('theme', 'light');
+            }
+        }
+
+        // Load saved preferences on page load
+        window.addEventListener('DOMContentLoaded', function() {
+            // Load font scale
+            const savedScale = localStorage.getItem('fontScale');
+            if (savedScale) {
+                fontScale = parseFloat(savedScale);
+                applyFontScale();
+            }
+
+            // Load theme
+            const savedTheme = localStorage.getItem('theme');
+            if (savedTheme === 'dark') {
+                document.body.classList.add('dark-mode');
+                const themeIconSmall = document.getElementById('theme-icon-small');
+                const themeIcon = document.getElementById('theme-icon');
+                const themeText = document.getElementById('theme-text');
+                if (themeIconSmall) themeIconSmall.textContent = '☀️';
+                if (themeIcon) themeIcon.textContent = '☀️';
+                if (themeText) themeText.textContent = 'Modo Claro';
+            }
+
+            // Adicionar event listener para Enter no input
+            document.getElementById('codigo-input').addEventListener('keypress', (e) => {
+                if (e.key === 'Enter') {
+                    consultarDiploma();
+                }
+            });
+
+            document.getElementById('codigo-fisico-input').addEventListener('keypress', (e) => {
+                if (e.key === 'Enter') {
+                    consultarDiploma();
+                }
+            });
+        });
+
+        // Toggle Accordion
+        function toggleAccordion(element) {
+            const content = element.nextElementSibling;
+            const isActive = element.classList.contains('active');
+
+            document.querySelectorAll('.accordion-title').forEach(title => {
+                if (title !== element) {
+                    title.classList.remove('active');
+                    title.nextElementSibling.classList.remove('show');
+                }
+            });
+
+            if (!isActive) {
+                element.classList.add('active');
+                content.classList.add('show');
+            } else {
+                element.classList.remove('active');
+                content.classList.remove('show');
+            }
+        }
+document.addEventListener('DOMContentLoaded', () => {
+    const urlParams = new URLSearchParams(window.location.search);
+    const codigoURL = urlParams.get('codigo');
+    
+    if (codigoURL) {
+        console.log('🎯 Código na URL detectado:', codigoURL);
+        document.getElementById('codigo-input').value = codigoURL.toUpperCase();
+        setTimeout(() => {
+            consultarDiploma();
+        }, 300);
+    }
+});
+        // Menu toggle (mobile)
+        document.querySelector('.menu-toggle').addEventListener('click', function() {
+            console.log('Menu toggle clicked');
+        });
+    </script>
+</body>
+</html>
